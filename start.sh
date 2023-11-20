@@ -2,7 +2,7 @@
 
 # PARAMETERS can be passed as environment variables 
 if [[ -z "${IMAGE_NAME}" ]]; then
-  IMAGE_NAME="wzl/ted"
+  IMAGE_NAME="mmi/virconv"
 fi
 if [[ -z "${IMAGE_TAG}" ]]; then
   IMAGE_TAG=latest
@@ -14,7 +14,7 @@ if [[ -z "${DOCKER_USER}" ]]; then
   DOCKER_USER="rosuser"
 fi
 if [[ -z "${CONTAINER_NAME}" ]]; then
-  CONTAINER_NAME="ted_container"
+  CONTAINER_NAME="virconv_container"
 fi
 # ---------------------------------------------------------------------------- #
 #                                  BUILD ARGS                                  #

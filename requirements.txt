@@ -1,8 +1,13 @@
-numpy
-torch=1.8.1
-numba
+numpy<1.23
+torch==1.8.1+cu111
+numba==0.56.0
 tensorboardX
 easydict
 pyyaml
 scikit-image
 tqdm
+spconv-cu111
+opencv-python
+prefetch_generator
+matplotlib
+--find-links https://download.pytorch.org/whl/torch_stable.html
