@@ -260,6 +260,7 @@ class DatasetTemplate(torch_data.Dataset):
                 points2 = points[points[:,0]>randx]
                 points2[:, 0]-= randx
                 data_dict['points'+rot_num_id] = np.concatenate([points1,points2])
+                # print('data_dict[points]', data_dict['points'+rot_num_id].shape)
                 boxes = data_dict['gt_boxes'+rot_num_id]
                 boxes1 = boxes[boxes[:,0]<=randx]
                 boxes1[:,0]+=randx_1
@@ -270,26 +271,28 @@ class DatasetTemplate(torch_data.Dataset):
             if 'mm' in data_dict:
                 if self.dataset_cfg.get('LATER_FUSION', True):
                     points_mm = data_dict['points' + rot_num_id][data_dict['points' + rot_num_id][:, -1] == 1]
+                    # print('points_mm', len(points_mm))
                     points = data_dict['points'+rot_num_id][data_dict['points'+rot_num_id][:, -1] == 2]
+                    # print('points', points.shape)
 
-                    if self.training:
-                        points_mm2 = self.input_point_discard(points_mm, rate=self.input_discard_rate)
-                    else:
-                        points_mm2 = self.input_point_discard(points_mm, bin_num=10, rate=self.input_discard_rate)
+                    # if self.training:
+                    #     points_mm2 = self.input_point_discard(points_mm, rate=self.input_discard_rate)
+                    # else:
+                    #     points_mm2 = self.input_point_discard(points_mm, bin_num=10, rate=self.input_discard_rate)
 
-                    data_dict['points_mm'+rot_num_id] = points_mm2
+                    data_dict['points_mm'+rot_num_id] = points_mm
                     data_dict['points'+rot_num_id] = points
 
                 else:
                     points_mm = data_dict['points' + rot_num_id][data_dict['points' + rot_num_id][:, -1] == 1]
                     points = data_dict['points' + rot_num_id][data_dict['points' + rot_num_id][:, -1] == 2]
 
-                    if self.training:
-                        points_mm2 = self.input_point_discard(points_mm, rate=self.input_discard_rate)
-                    else:
-                        points_mm2 = self.input_point_discard(points_mm, bin_num=10, rate=self.input_discard_rate)
+                    # if self.training:
+                    #     points_mm2 = self.input_point_discard(points_mm, rate=self.input_discard_rate)
+                    # else:
+                    #     points_mm2 = self.input_point_discard(points_mm, bin_num=10, rate=self.input_discard_rate)
 
-                    final_points = np.concatenate([points, points_mm2])
+                    final_points = np.concatenate([points, points_mm])
                     data_dict['points' + rot_num_id] = final_points
                     data_dict['points' + rot_num_id][:, 3]/=10
 

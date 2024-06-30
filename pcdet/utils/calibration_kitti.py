@@ -27,9 +27,10 @@ def get_calib_from_file(filepath):
     '''
 
     data2 = {}
-    R0 = np.array([[ 0.99992624,  0.00965411, -0.0072371 ],
-                  [-0.00968531,  0.99994343, -0.00433077],
-                  [ 0.00719491,  0.00440054,  0.99996366]])
+    # R0 = np.array([[ 0.99992624,  0.00965411, -0.0072371 ],
+    #               [-0.00968531,  0.99994343, -0.00433077],
+    #               [ 0.00719491,  0.00440054,  0.99996366]])
+    R0 = np.eye(3)
     with open(filepath) as f:
         for line in f.readlines():
             if line[:2] == "P2":
@@ -114,6 +115,7 @@ class Calibration(object):
         """
         pts_lidar_hom = self.cart_to_hom(pts_lidar)
         pts_rect = np.dot(pts_lidar_hom, np.dot(self.V2C.T, self.R0.T))
+        print('pts_rect', pts_rect.shape)
         # pts_rect = reduce(np.dot, (pts_lidar_hom, self.V2C.T, self.R0.T))
         return pts_rect
 
@@ -127,6 +129,7 @@ class Calibration(object):
         R0 = torch.from_numpy(self.R0.T.astype(np.float32)).to(pts_lidar.device)
         pts_rect = torch.matmul(pts_lidar_hom, torch.matmul(V2C, R0))
         # pts_rect = reduce(np.dot, (pts_lidar_hom, self.V2C.T, self.R0.T))
+        print('pts_rect', pts_rect.shape)
         return pts_rect
 
     def rect_to_img(self, pts_rect):

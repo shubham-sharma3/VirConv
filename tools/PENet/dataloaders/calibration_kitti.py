@@ -26,9 +26,10 @@ def get_calib_from_file(filepath):
     '''
 
     data2 = {}
-    R0 = np.array([[ 0.99992624,  0.00965411, -0.0072371 ],
-                                          [-0.00968531,  0.99994343, -0.00433077],
-                                          [ 0.00719491,  0.00440054,  0.99996366]])
+    # R0 = np.array([[ 0.99992624,  0.00965411, -0.0072371 ],
+    #                                       [-0.00968531,  0.99994343, -0.00433077],
+    #                                       [ 0.00719491,  0.00440054,  0.99996366]])
+    R0 = np.eye(3)
     with open(filepath) as f:
         for line in f.readlines():
             if line[:2] == "P2":
@@ -42,6 +43,7 @@ def get_calib_from_file(filepath):
             if line[:14] == "Tr_velo_to_cam" or line[:11] == "Tr_velo_cam":
                 vtc_mat = re.split(" ", line.strip())
                 vtc_mat = np.array(vtc_mat[-12:], np.float32)
+                # print(vtc_mat)
 
             if line[:7] == "R0_rect" or line[:6] == "R_rect":
                 R0 = re.split(" ", line.strip())
@@ -92,8 +94,10 @@ class Calibration(object):
         R0_ext = np.hstack((self.R0, np.zeros((3, 1), dtype=np.float32)))  # (3, 4)
         R0_ext = np.vstack((R0_ext, np.zeros((1, 4), dtype=np.float32)))  # (4, 4)
         R0_ext[3, 3] = 1
+        # print(self.V2C)
         V2C_ext = np.vstack((self.V2C, np.zeros((1, 4), dtype=np.float32)))  # (4, 4)
         V2C_ext[3, 3] = 1
+        # print(np.linalg.det(R0_ext), np.linalg.det(V2C_ext))
 
         pts_lidar = np.dot(pts_rect_hom, np.linalg.inv(np.dot(R0_ext, V2C_ext).T))
         return pts_lidar[:, 0:3]

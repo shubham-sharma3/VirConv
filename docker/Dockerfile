@@ -50,6 +50,7 @@ RUN sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 # Install python deps
 RUN pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+ENV TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
 
 # Install python deps from requirements.txt
 RUN echo "export PATH=/home/${USERNAME}/.local/bin:\$PATH" >> ~/.bashrc 

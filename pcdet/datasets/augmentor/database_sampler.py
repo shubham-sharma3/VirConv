@@ -203,7 +203,7 @@ class DataBaseSampler(object):
         Returns:
 
         """
-        
+        # print(data_dict)
         gt_boxes = data_dict['gt_boxes']
         gt_names = data_dict['gt_names'].astype(str)
         existed_boxes = gt_boxes

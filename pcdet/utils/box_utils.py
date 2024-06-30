@@ -101,7 +101,7 @@ def boxes3d_kitti_camera_to_lidar(boxes3d_camera, calib):
     xyz_camera = boxes3d_camera[:, 0:3]
     l, h, w, r = boxes3d_camera[:, 3:4], boxes3d_camera[:, 4:5], boxes3d_camera[:, 5:6], boxes3d_camera[:, 6:7]
     xyz_lidar = calib.rect_to_lidar(xyz_camera)
-    xyz_lidar[:, 2] += h[:, 0] / 2
+    # xyz_lidar[:, 2] += h[:, 0] / 2
     return np.concatenate([xyz_lidar, l, w, h, -(r + np.pi / 2)], axis=-1)
 
 
@@ -115,7 +115,7 @@ def boxes3d_kitti_fakelidar_to_lidar(boxes3d_lidar):
 
     """
     w, l, h, r = boxes3d_lidar[:, 3:4], boxes3d_lidar[:, 4:5], boxes3d_lidar[:, 5:6], boxes3d_lidar[:, 6:7]
-    boxes3d_lidar[:, 2] += h[:, 0] / 2
+    # boxes3d_lidar[:, 2] += h[:, 0] / 2
     return np.concatenate([boxes3d_lidar[:, 0:3], l, w, h, -(r + np.pi / 2)], axis=-1)
 
 
@@ -129,7 +129,7 @@ def boxes3d_kitti_lidar_to_fakelidar(boxes3d_lidar):
 
     """
     dx, dy, dz, heading = boxes3d_lidar[:, 3:4], boxes3d_lidar[:, 4:5], boxes3d_lidar[:, 5:6], boxes3d_lidar[:, 6:7]
-    boxes3d_lidar[:, 2] -= dz[:, 0] / 2
+    # boxes3d_lidar[:, 2] -= dz[:, 0] / 2
     return np.concatenate([boxes3d_lidar[:, 0:3], dy, dx, dz, -heading - np.pi / 2], axis=-1)
 
 
@@ -159,7 +159,7 @@ def boxes3d_lidar_to_kitti_camera(boxes3d_lidar, calib):
     xyz_lidar = boxes3d_lidar[:, 0:3]
     l, w, h, r = boxes3d_lidar[:, 3:4], boxes3d_lidar[:, 4:5], boxes3d_lidar[:, 5:6], boxes3d_lidar[:, 6:7]
 
-    xyz_lidar[:, 2] -= h.reshape(-1) / 2
+    # xyz_lidar[:, 2] -= h.reshape(-1) / 2
     xyz_cam = calib.lidar_to_rect(xyz_lidar)
     # xyz_cam[:, 1] += h.reshape(-1) / 2
     r = -r - np.pi / 2
@@ -183,11 +183,11 @@ def boxes3d_to_corners3d_kitti_camera(boxes3d, bottom_center=True):
     l, h, w = boxes3d[:, 3], boxes3d[:, 4], boxes3d[:, 5]
     x_corners = np.array([l / 2., l / 2., -l / 2., -l / 2., l / 2., l / 2., -l / 2., -l / 2], dtype=np.float32).T
     z_corners = np.array([w / 2., -w / 2., -w / 2., w / 2., w / 2., -w / 2., -w / 2., w / 2.], dtype=np.float32).T
-    if bottom_center:
-        y_corners = np.zeros((boxes_num, 8), dtype=np.float32)
-        y_corners[:, 4:8] = -h.reshape(boxes_num, 1).repeat(4, axis=1)  # (N, 8)
-    else:
-        y_corners = np.array([h / 2., h / 2., h / 2., h / 2., -h / 2., -h / 2., -h / 2., -h / 2.], dtype=np.float32).T
+    # if bottom_center:
+        # y_corners = np.zeros((boxes_num, 8), dtype=np.float32)
+        # y_corners[:, 4:8] = -h.reshape(boxes_num, 1).repeat(4, axis=1)  # (N, 8)
+    # else:
+    y_corners = np.array([h / 2., h / 2., h / 2., h / 2., -h / 2., -h / 2., -h / 2., -h / 2.], dtype=np.float32).T
 
     ry = boxes3d[:, 6]
     zeros, ones = np.zeros(ry.size, dtype=np.float32), np.ones(ry.size, dtype=np.float32)

@@ -8,6 +8,7 @@ from pcdet.ops.roiaware_pool3d import roiaware_pool3d_utils
 from pcdet.utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from pcdet.datasets.dataset import DatasetTemplate
 from pcdet.models.model_utils import model_nms_utils
+from pcdet.datasets.augmentor.augmentor_utils import get_points_in_bbox
 import time
 
 class KittiDatasetMM(DatasetTemplate):
@@ -175,27 +176,37 @@ class KittiDatasetMM(DatasetTemplate):
                 rots = annotations['rotation_y'][:num_objects]
                 loc_lidar = calib.rect_to_lidar(loc)
                 l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
-                loc_lidar[:, 2] += h[:, 0] / 2
-                gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
+                # loc_lidar[:, 2] += h[:, 0] / 2
+                gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, (rots[..., np.newaxis])], axis=1)
                 annotations['gt_boxes_lidar'] = gt_boxes_lidar
 
                 info['annos'] = annotations
 
                 if count_inside_pts:
                     points = self.get_lidar(sample_idx)
-                    calib = self.get_calib(sample_idx)
-                    pts_rect = calib.lidar_to_rect(points[:, 0:3])
+                    
+                    # calib = self.get_calib(sample_idx)
+                    # pts_rect = calib.lidar_to_rect(points[:, 0:3])
 
-                    fov_flag = self.get_fov_flag(pts_rect, info['image']['image_shape'], calib)
-                    pts_fov = points[fov_flag]
-                    corners_lidar = box_utils.boxes_to_corners_3d(gt_boxes_lidar)
+                    # fov_flag = self.get_fov_flag(pts_rect, info['image']['image_shape'], calib)
+                    # pts_fov = points[fov_flag]
+                    # # print('pts_fov', pts_fov.shape)
+                    # corners_lidar = box_utils.boxes_to_corners_3d(gt_boxes_lidar)
                     num_points_in_gt = -np.ones(num_gt, dtype=np.int32)
 
                     for k in range(num_objects):
-                        flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
-                        num_points_in_gt[k] = flag.sum()
+                        points_in_gt = get_points_in_bbox(points,gt_boxes_lidar[k])
+                        # print('points_in_gt', points_in_gt.shape)
+                        if len(points_in_gt) > 0:
+                            num_points_in_gt[k] = len(points_in_gt)
+                        
+                    # print(points.shape)
+                    #     flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
+                    #     # print('flag', flag.shape, flag.sum())
+                    #     num_points_in_gt[k] = flag.sum()
                     annotations['num_points_in_gt'] = num_points_in_gt
-
+                    print('num_points_in_gt', num_points_in_gt)
+                    
             return info
 
         sample_id_list = sample_id_list if sample_id_list is not None else self.sample_id_list

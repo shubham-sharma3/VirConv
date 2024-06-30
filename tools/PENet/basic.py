@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
-
-gks = 5
+# gks -> guide kernel size
+gks = 5 
 pad = [i for i in range(gks*gks)]
 shift = torch.zeros(gks*gks, 4)
 for i in range(gks):

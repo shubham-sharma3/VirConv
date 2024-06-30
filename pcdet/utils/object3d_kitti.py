@@ -83,7 +83,7 @@ class Object3d(object):
         """
         l, h, w = self.l, self.h, self.w
         x_corners = [l / 2, l / 2, -l / 2, -l / 2, l / 2, l / 2, -l / 2, -l / 2]
-        y_corners = [0, 0, 0, 0, -h, -h, -h, -h]
+        y_corners = [h / 2, h / 2, -h / 2, -h / 2, h / 2, h / 2, -h / 2, -h / 2]
         z_corners = [w / 2, -w / 2, -w / 2, w / 2, w / 2, -w / 2, -w / 2, w / 2]
 
         R = np.array([[np.cos(self.ry), 0, np.sin(self.ry)],
